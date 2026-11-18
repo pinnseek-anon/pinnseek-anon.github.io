@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Data, code and reproduction | PINNSeek</title>
+<meta name="description" content="Knowledge-centric agent system for autonomous discovery of physics-informed neural network solvers">
+<link rel="icon" type="image/svg+xml" href="assets/img/pinnseek-icon.svg?v=30a948c7">
+<link rel="stylesheet" href="assets/css/site.css?v=f72e51e4">
+
+<script defer src="assets/js/site.js?v=b14c5bde"></script>
+</head>
+<body>
+<div class="review-banner"><div class="wrap">Anonymous companion site of a manuscript under double-blind review.</div></div>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="index.html"><img class="brand-mark" src="assets/img/pinnseek-logo.svg?v=94bcde47" alt="PINNSeek" width="426" height="97"></a>
+<nav class="nav" aria-label="Main"><a href="index.html">Overview</a><a href="problems.html">Problems</a><a href="download.html" aria-current=page>Data &amp; code</a></nav>
+</div></header>
+<main>
+
+<section class="hero"><div class="wrap">
+
+<h1>Data, code and reproduction</h1>
+<p class="lede">The framework, the task packages of the 18 problems and the 30 generalization cases, the discovered PINN solvers, the literature base, the records of the analysed discovery runs and the source data of the figures. 29 files, 274.4 MB in total, each a zip archive with a README and the md5 of every file inside.</p>
+</div></section>
+
+<section><div class="wrap">
+<h2>Reproduce a result of Table 1</h2>
+<p>Every discovered solver follows the task contract and runs with the evaluation tool of its task package, which trains it for the training time of the problem and prints its relative <i>L</i><sup>2</sup> error. The evaluation tool uses POSIX file locks, so it runs on Linux with one NVIDIA GPU; the paper uses an RTX A6000, and the error reached in a fixed wall-clock time depends on the GPU.</p>
+<pre class="code"># packages pinned in pyproject.toml of the framework
+python3.11 -m venv .venv &amp;&amp; . .venv/bin/activate
+pip install "jax[cuda12]==0.4.33" flax==0.9.0 optax==0.2.3 numpy==2.1.1 scipy==1.17.1 \
+            jaxopt==0.8.5 ml_collections==1.1.0 \
+            "soap-jax @ git+https://github.com/haydn-jones/SOAP_JAX@ddddc25724dfd629b0cd01584eca1e32ea8ac4de"
+
+# a task package and its discovered solver, e.g. KS
+unzip task-ks.zip &amp;&amp; unzip discovered-solvers.zip
+mkdir -p project/blocks/b01
+cp -r task-ks/ks project/task
+cp discovered-solvers/ks.py project/blocks/b01/
+cd project &amp;&amp; python task/eval.py blocks/b01/ks.py --gpu 0 --seed 1   # seeds 1-5 as in Table 1</pre>
+<p>The last line printed is the evaluation record, with the relative <i>L</i><sup>2</sup> error of Table 1, ‖<i>u</i> − <i>u</i><sub>ref</sub>‖<sub>2</sub> / ‖<i>u</i><sub>ref</sub>‖<sub>2</sub> on the reference grid, with the fields of each problem as defined in Supplementary Note 1. <code>--smoke</code> runs a 10-second rehearsal on the CPU.</p>
+</div></section>
+
+<section><div class="wrap">
+<h2>Downloads</h2>
+<h3 id="framework">PINNSeek framework</h3><p class="small">Source code of the framework described in the Methods: orchestrator, evaluation tool, charter, literature base, coding-agent plugin, example tasks and tests.</p>
+<div class="table-wrap"><table><thead><tr><th>Asset</th><th>Content</th><th>Files</th><th>Size</th><th>md5</th></tr></thead>
+<tbody><tr><td><a href="/release/pinnseek-framework.zip">pinnseek-framework.zip</a></td><td>PINNSeek framework source</td><td class="num">210</td><td class="num">6.9 MB</td><td class="md5">bdf7c8b9d5c47d86e1eb4256c7f4c976</td></tr></tbody></table></div><h3 id="tasks">Task packages of the 18 problems</h3><p class="small">Problem statement, standard PINN solver, evaluation tool, input data and reference solution of each problem.</p>
+<div class="table-wrap"><table><thead><tr><th>Asset</th><th>Content</th><th>Files</th><th>Size</th><th>md5</th></tr></thead>
+<tbody><tr><td><a href="/release/task-poissoncg.zip">task-poissoncg.zip</a></td><td>Poisson-CG</td><td class="num">4</td><td class="num">1.7 MB</td><td class="md5">4abf29893df0e8155e2845285125204a</td></tr><tr><td><a href="/release/task-ib.zip">task-ib.zip</a></td><td>IB</td><td class="num">5</td><td class="num">409.3 kB</td><td class="md5">5ef7f2d00df73cfeeabbddd61997c8e7</td></tr><tr><td><a href="/release/task-kdv.zip">task-kdv.zip</a></td><td>KdV</td><td class="num">5</td><td class="num">1.0 MB</td><td class="md5">4866209ac78bc7a7f4b39d7ca9024eef</td></tr><tr><td><a href="/release/task-wavems.zip">task-wavems.zip</a></td><td>Wave-HM</td><td class="num">5</td><td class="num">7.8 MB</td><td class="md5">0d86f29db4294a416037e77c4d63084a</td></tr><tr><td><a href="/release/task-ldc.zip">task-ldc.zip</a></td><td>LDC</td><td class="num">4</td><td class="num">1.0 MB</td><td class="md5">259460f81e2a88ccda52919a2304730a</td></tr><tr><td><a href="/release/task-bfs.zip">task-bfs.zip</a></td><td>BFS</td><td class="num">4</td><td class="num">640.5 kB</td><td class="md5">a86b36ebbdac21040f35dbbb4a92cf6a</td></tr><tr><td><a href="/release/task-heatlt.zip">task-heatlt.zip</a></td><td>Heat-LT</td><td class="num">5</td><td class="num">893.0 kB</td><td class="md5">d391881001c77ef3a3af347b2c315889</td></tr><tr><td><a href="/release/task-naca.zip">task-naca.zip</a></td><td>NACA</td><td class="num">5</td><td class="num">9.6 MB</td><td class="md5">e8a51ae2e7e39fd1f636289edf842b72</td></tr><tr><td><a href="/release/task-smoke.zip">task-smoke.zip</a></td><td>Smoke</td><td class="num">5</td><td class="num">31.2 MB</td><td class="md5">386842b122bc62715284aa19a1e6d60f</td></tr><tr><td><a href="/release/task-cyl.zip">task-cyl.zip</a></td><td>Cyl</td><td class="num">5</td><td class="num">5.1 MB</td><td class="md5">daa75906cb748ba8beca7bafa3edb362</td></tr><tr><td><a href="/release/task-gl.zip">task-gl.zip</a></td><td>GL</td><td class="num">5</td><td class="num">12.6 MB</td><td class="md5">67a1a810ce47ba00230d4f0b90bebd14</td></tr><tr><td><a href="/release/task-gs.zip">task-gs.zip</a></td><td>GS</td><td class="num">5</td><td class="num">6.9 MB</td><td class="md5">d25332d1f0f78ac3196a93344cb1db4e</td></tr><tr><td><a href="/release/task-kf.zip">task-kf.zip</a></td><td>KF</td><td class="num">5</td><td class="num">6.9 MB</td><td class="md5">c573c234619600bf3318dd38bdb082f9</td></tr><tr><td><a href="/release/task-ks.zip">task-ks.zip</a></td><td>KS</td><td class="num">5</td><td class="num">466.5 kB</td><td class="md5">6164fafd09be25f38545ec331ffdb760</td></tr><tr><td><a href="/release/task-ns4d.zip">task-ns4d.zip</a></td><td>NS4D</td><td class="num">5</td><td class="num">3.8 MB</td><td class="md5">ad15c4316e55f316a48f682e13488103</td></tr><tr><td><a href="/release/task-cyl2.zip">task-cyl2.zip</a></td><td>Cyl-LT</td><td class="num">4</td><td class="num">8.5 MB</td><td class="md5">34fad5a602fdb1b6ddd11f27a26ce5d7</td></tr><tr><td><a href="/release/task-rt.zip">task-rt.zip</a></td><td>RT</td><td class="num">5</td><td class="num">9.4 MB</td><td class="md5">ac58315b1c092a3d1562ffa5f32e79c8</td></tr><tr><td><a href="/release/task-wing3d.zip">task-wing3d.zip</a></td><td>Wing3D</td><td class="num">6</td><td class="num">19.5 MB</td><td class="md5">2440f70cd6c1440be9e29949b39bd054</td></tr></tbody></table></div><h3 id="solvers">Discovered PINN solvers</h3><p class="small">The 18 solvers of Table 1, also viewable on each problem page.</p>
+<div class="table-wrap"><table><thead><tr><th>Asset</th><th>Content</th><th>Files</th><th>Size</th><th>md5</th></tr></thead>
+<tbody><tr><td><a href="/release/discovered-solvers.zip">discovered-solvers.zip</a></td><td>Discovered PINN solvers (18 files)</td><td class="num">18</td><td class="num">117.2 kB</td><td class="md5">650fe12d77445827be56cb1750db232f</td></tr></tbody></table></div><h3 id="literature">Literature base</h3><p class="small">The 130 notes of the literature base.</p>
+<div class="table-wrap"><table><thead><tr><th>Asset</th><th>Content</th><th>Files</th><th>Size</th><th>md5</th></tr></thead>
+<tbody><tr><td><a href="/release/literature-base.zip">literature-base.zip</a></td><td>Literature base (130 notes)</td><td class="num">130</td><td class="num">347.7 kB</td><td class="md5">0fc46de8ebd841a0c6a0dcbf468ee7f0</td></tr></tbody></table></div><h3 id="runs">Discovery runs</h3><p class="small">Candidate solvers, experience-base summaries and evaluation records of the 22 discovery runs, three on LDC, three on KS and one on each other problem.</p>
+<div class="table-wrap"><table><thead><tr><th>Asset</th><th>Content</th><th>Files</th><th>Size</th><th>md5</th></tr></thead>
+<tbody><tr><td><a href="/release/discovery-runs.zip">discovery-runs.zip</a></td><td>Candidate solvers, round summaries and evaluation records of 22 discovery runs</td><td class="num">4632</td><td class="num">22.8 MB</td><td class="md5">10ee53dfcdce8b94f7e835961e8d7abb</td></tr></tbody></table></div><h3 id="generalization">Generalization cases</h3><p class="small">The 30 new cases of LDC, BFS, NACA, KF and KS (Fig. 2): problem statements, reference solutions, scorers and the retrained solvers.</p>
+<div class="table-wrap"><table><thead><tr><th>Asset</th><th>Content</th><th>Files</th><th>Size</th><th>md5</th></tr></thead>
+<tbody><tr><td><a href="/release/generalization-ldc.zip">generalization-ldc.zip</a></td><td>LDC</td><td class="num">30</td><td class="num">7.1 MB</td><td class="md5">026d20f724d240d2efe6512b24e16994</td></tr><tr><td><a href="/release/generalization-bfs.zip">generalization-bfs.zip</a></td><td>BFS</td><td class="num">24</td><td class="num">2.4 MB</td><td class="md5">19e14a5253cd49294807761a8219b8dd</td></tr><tr><td><a href="/release/generalization-naca.zip">generalization-naca.zip</a></td><td>NACA</td><td class="num">42</td><td class="num">68.1 MB</td><td class="md5">f757cfb20ec293401170fef2821aaa89</td></tr><tr><td><a href="/release/generalization-kf.zip">generalization-kf.zip</a></td><td>KF</td><td class="num">35</td><td class="num">33.8 MB</td><td class="md5">b5b7bd39dff1e992e0755271ca21806c</td></tr><tr><td><a href="/release/generalization-ks.zip">generalization-ks.zip</a></td><td>KS</td><td class="num">70</td><td class="num">4.7 MB</td><td class="md5">aa1c1ef9bc424184a1ee5634fc8e510c</td></tr></tbody></table></div><h3 id="comparison">Drivers of the four SOTA methods</h3><p class="small">The code that trains Scale-PINN, APTS, SPINN and DSGNAR on each problem for Table 1 and Supplementary Table 1.</p>
+<div class="table-wrap"><table><thead><tr><th>Asset</th><th>Content</th><th>Files</th><th>Size</th><th>md5</th></tr></thead>
+<tbody><tr><td><a href="/release/sota-drivers.zip">sota-drivers.zip</a></td><td>Drivers of the four SOTA methods (18 problems)</td><td class="num">289</td><td class="num">687.7 kB</td><td class="md5">fe7152ee97c2a3664fdaf76a99644815</td></tr></tbody></table></div><h3 id="source">Source data of the figures</h3><p class="small">The plotted numbers of Figs. 2, 4, 5, Extended Data Figs. 1-6 and Supplementary Figs. 1-18.</p>
+<div class="table-wrap"><table><thead><tr><th>Asset</th><th>Content</th><th>Files</th><th>Size</th><th>md5</th></tr></thead>
+<tbody><tr><td><a href="/release/figure-source-data.zip">figure-source-data.zip</a></td><td>Source data of the figures</td><td class="num">12</td><td class="num">163.2 kB</td><td class="md5">e6b85e3ee549512fe2bd05429468f703</td></tr></tbody></table></div>
+<h3>Sources of reference data</h3>
+<p class="small">Reference solutions released with earlier work are included with the sources given in Supplementary Note 1 and on each problem page. The ERA5 reanalysis and GFAS fire emissions behind the inputs of Smoke are available from their providers.</p>
+</div></section>
+
+</main>
+<footer class="site-footer"><div class="wrap">
+<p>PINNSeek: knowledge-centric agent system for autonomous discovery of physics-informed neural network solvers. Anonymous authors.</p>
+</div></footer>
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Enlarged figure"><img alt=""></div>
+<dialog class="viewer" id="viewer" aria-label="File viewer"><div class="viewer-head"><div class="viewer-title"></div>
+<div class="viewer-actions"><button type="button" class="viewer-copy">Copy</button><button type="button" class="viewer-close" aria-label="Close">&times;</button></div></div>
+<div class="viewer-meta"></div><pre class="viewer-body"><code></code></pre></dialog>
+</body>
+</html>
